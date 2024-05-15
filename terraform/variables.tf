@@ -17,7 +17,7 @@ variable "common_tags" {
 variable "tags" {
   type = map
   default = {
-    Component = "catalogue"
+    Component = "user"
   }
 }
 variable "vpc_security_group_id" {
