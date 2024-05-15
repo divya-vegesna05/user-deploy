@@ -64,28 +64,28 @@ pipeline{
             """
         }
     }
-    // stage("destroy")
-    // {
-    //    when
-    //    {
-    //     expression
-    //     {
-    //         params.Destroy
+    stage("destroy")
+    {
+       when
+       {
+        expression
+        {
+            params.Destroy
 
-    //     }
-    //   }
+        }
+      }
         // input {
         //         message "Should we continue?"
         //         ok "Yes, we should."
         // }
-        // steps{
+        steps{
              
-        //     sh """
-        //    cd terraform
-        //     terraform destroy -var-file="../${environment}/${environment}.tfvars" -var="app_version=${version}" -auto-approve
-        //    """
-        //}
-        // }
+            sh """
+           cd terraform
+            terraform destroy -var-file="../${environment}/${environment}.tfvars" -var="app_version=${version}" -auto-approve
+           """
+        }
+        }
     } 
 
  post { 
