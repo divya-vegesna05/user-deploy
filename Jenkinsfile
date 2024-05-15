@@ -11,6 +11,8 @@ pipeline{
     parameters {
          string(name: 'version', defaultValue: '', description: 'Pick version')
          string(name: 'environment', defaultValue: '', description: 'Pick environment')
+         booleanParam(name: 'Create', defaultValue: false, description: 'Toggle this value')
+         booleanParam(name: 'Destroy', defaultValue: false, description: 'Toggle this value')
      }
     stages{
          stage("version")
@@ -18,8 +20,8 @@ pipeline{
         steps{
              
             sh """
-              echo "version: ${version}"
-              echo "environment: ${environment}"
+              echo "version: ${params.version}"
+              echo "environment: ${params.environment}"
             """
             }
          }
@@ -30,7 +32,7 @@ pipeline{
              
             sh """
             cd terraform
-            terraform init -backend-config="${environment}/backend.tf" -reconfigure
+            terraform init -backend-config="${params.environment}/backend.tf" -reconfigure
             """
             }
          }
@@ -40,25 +42,25 @@ pipeline{
             
             sh """
             cd terraform
-            terraform plan -var-file="../${environment}/${environment}.tfvars" -var="app_version=${version}"
+            terraform plan -var-file="../${params.environment}/${params.environment}.tfvars" -var="app_version=${params.version}"
             """   
         }
     }
     stage("apply")
     {
-    //    when
-    //    {
-    //     expression
-    //     {
-    //         params.Action == 'apply'
+       when
+       {
+        expression
+        {
+            params.Create
 
-    //     }
-    //    }
+        }
+       }
         steps{
              
             sh """
             cd terraform
-            terraform apply -var-file="../${environment}/${environment}.tfvars" -var="app_version=${version}" -auto-approve
+            terraform apply -var-file="../${params.environment}/${params.environment}.tfvars" -var="app_version=${params.version}" -auto-approve
             """
         }
     }
@@ -68,10 +70,10 @@ pipeline{
     //    {
     //     expression
     //     {
-    //         params.Action == 'destroy'
+    //         params.Destroy
 
     //     }
-    //    }
+    //   }
         // input {
         //         message "Should we continue?"
         //         ok "Yes, we should."
@@ -82,7 +84,7 @@ pipeline{
         //    cd terraform
         //     terraform destroy -var-file="../${environment}/${environment}.tfvars" -var="app_version=${version}" -auto-approve
         //    """
-        
+        //}
         // }
     } 
 
